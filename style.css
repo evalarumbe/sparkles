@@ -1,0 +1,44 @@
+body {
+    background-color: black;
+  }
+  
+  .first.sparkle {
+    height: 50px;
+    width: 50px;
+  }
+
+  .sparkle {
+    opacity: 0;
+  }
+  
+/* Fallback message for anyone without JS */
+p {
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-top: 2rem;
+  padding: 2rem 3rem 2.5rem;
+  border-radius: 15px;
+}
+
+a {
+  text-decoration: none;
+  border-bottom: 1px solid #25435c;
+}
+
+a:link {
+  color: #25435c;
+}
+
+a:visited {
+  color: #561076;
+  border-color: #561076;
+}
+
+a:hover {
+  color: #205f92;
+  border-color: #205f92;
+}
+
+a:active {
+  color: #012d57;
+  border-color: #012d57;
+}
