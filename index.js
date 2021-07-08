@@ -1,13 +1,21 @@
 (() => {
     /**
-     * TODO
+     * Define some utility functions.
      * @returns {Object} of utility functions
      */
     function initUtils() {
         const utils = {};
 
+        utils.randomX = () => {
+            return Math.floor(Math.random() * window.innerWidth);
+        };
+
+        utils.randomY = () => {
+            return Math.floor(Math.random() * window.innerHeight);
+        };
+
         utils.randomSize = () => {
-            const sizes = [10, 20, 30, 50, 80, 130]; // px (Fibonacci, my heart)
+            const sizes = [1, 1, 2, 3, 5, 8, 13]; // px (Fibonacci, my heart)
             const i = Math.floor(Math.random() * (sizes.length + 1));
             return sizes[i];
         };
@@ -20,71 +28,101 @@
         return utils;
     }
 
-    function initSparkles() {
-        const sparkles = createSparkles(10); // TODO: Arbitrarily more than 10.
-        const area = document.getElementById('make-me-sparkle');
+    /**
+     * Identify the canvas element, set its resolution according to viewport size,
+     * and return its 2D context.
+     * 
+     * @param {String} canvasSelector - canvas element to fill with sparkles
+     * @returns {CanvasRenderingContext2D}
+     */
+    function getCanvasContext(canvasSelector) {
+        const canvas = document.querySelector(canvasSelector);
+        const ctx = canvas.getContext('2d');
 
-        scatter(sparkles, area);
-        animate(sparkles);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        return ctx;
     }
 
     /**
-     * Clone the existing SVG until we have enough sparkles,
-     * (though one can never truly have enough sparkles).
-     * 
-     * @param {number} n - How many sparkles would you like?
-     * @return {Array} - HTMLElement Array of SVGs
+     * Define sparkle-relevant funcs and get sparklin'.
+     * @param {CanvasRenderingContext2D} ctx - where to draw the sparkles
      */
-    function createSparkles(n) {
-        const firstSparkle = document.querySelector('.first.sparkle');
-        const sparkles = [firstSparkle];
-        let newSparkle, newSparkleSize;
-
-        // Clone the first sparkle
-        while (sparkles.length < n) {
-            newSparkle = firstSparkle.cloneNode(true); // Include descendants
-            newSparkle.classList.remove('first');
-            newSparkleSize = utils.randomSize();
-
-            newSparkle.style.width = newSparkleSize;
-            newSparkle.style.height = newSparkleSize;
-
-            sparkles.push(newSparkle);
+    function initSparkles(ctx) {
+        /**
+         * Draw a single sparkle based on a given center point and radius.
+         * 
+         * @param {number} x - center point from left (px)
+         * @param {number} y - center point from top (px)
+         * @param {number} r - sparkle radius (px)
+         */
+        function drawSparkle(x, y, r) {
+            const halfR = r / 2;
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(x, (y - r)); // top point
+            ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
+            ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
+            ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
+            ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
+            ctx.fill();
         }
 
-        return sparkles;
-    }
+        /**
+         * Draw on the <canvas> until we have enough sparkles.
+         * (though one can never truly have enough sparkles).
+         * 
+         * @param {number} n - How many sparkles would you like?
+         * @param {CanvasRenderingContext2D} ctx - HTML5 canvas context (2D)
+         */
+        function createSparkles(n) {
+            let randomX, randomY, randomRadius;
+            for (let i = 0; i < n; i++) {
+                randomX = utils.randomX();
+                randomY = utils.randomY();
+                randomRadius = utils.randomSize();
+                drawSparkle(randomX, randomY, randomRadius);
+            }
+        }
 
-    /**
-     * TODO
-     * @param {Array} sparkles - HTMLElement Array of sparkles to animate
-     */
-    function animate(sparkles) {
-        
-        sparkles.forEach(sparkle => {
-            const twinkle = new gsap.timeline({repeat: -1, yoyo: true});
-            const randomDelay = utils.randomDelay();
-
-            twinkle.to(sparkle, {
-                opacity: 1,
-                delay: randomDelay,
-                duration: 2,
-                ease: 'power2.in',
-            });
-        });
-    }
-
-    /**
-     * TODO
-     * @param {Array} sparkles - HTMLElement Array of sparkles to scatter
-     * @param {HTMLElement} area - A parent element to cover with sparkles
-     */
-    function scatter(sparkles, area) {
-        sparkles.forEach(sparkle => {
-            area.appendChild(sparkle);  
-        });
+        createSparkles(1000); // as many as you like
     }
 
     const utils = initUtils();
-    initSparkles();
+    initSparkles(getCanvasContext('#make-me-sparkle'));
 })();
+
+
+// WILDERNESS of REFACTORIA
+
+/**
+ * TODO: redo with canvas
+ * @param {Array} sparkles - HTMLElement Array of sparkles to animate
+ */
+    function animate(sparkles) {
+    
+    sparkles.forEach(sparkle => {
+        const twinkle = new gsap.timeline({repeat: -1, yoyo: true});
+        const randomDelay = utils.randomDelay();
+
+        twinkle.to(sparkle, {
+            opacity: 1,
+            delay: randomDelay,
+            duration: 2,
+            ease: 'power2.in',
+        });
+    });
+}
+
+/**
+ * TODO: redo with canvas
+ * @param {Array} sparkles - HTMLElement Array of sparkles to scatter
+ * @param {HTMLElement} area - A parent element to cover with sparkles
+ */
+function scatter(sparkles, area) {
+    sparkles.forEach(sparkle => {
+        area.appendChild(sparkle);  
+    });
+}
