@@ -1,6 +1,6 @@
 (() => {
     const utils = initUtils(); // Used in nested funcs
-    drawSparkles(1000, '#make-me-sparkle'); // As many sparkles as you like
+    drawSparkles(100, '#make-me-sparkle'); // As many sparkles as you like
 
     
     /**
@@ -65,6 +65,7 @@
         
         // Animate sparkles
         sparkles.forEach(sparkle => {
+            const { x, y, r } = sparkle;
             // Set the animation end state
             gsap.to(sparkle, {
                 duration: 2,
@@ -72,12 +73,13 @@
                 repeat: -1,
                 yoyo: true,
                 opacity: 1,
+                r: r * 2,
             });
             
             // Trigger repaints on each frame
             gsap.ticker.add(() => {
-                sparkle.draw = function() { // TODO: there's gotta be a better place to define this
-                    const { x, y, r } = sparkle;
+                sparkle.draw = function(r) { // TODO: there's gotta be a better place to define this
+                    const { x, y } = sparkle;
                     const halfR = r / 2;
 
                     ctx.beginPath();
@@ -92,12 +94,12 @@
                 const { opacity } = sparkle;
                 // Clear the sparkle on each frame
                 ctx.fillStyle = `rgba(0, 0, 0, 100)`;
-                sparkle.draw();
+                sparkle.draw(sparkle.r * 2); // TODO: specify it's the same value in gsap.to({r})
                 ctx.fill();
                 
                 // Redraw the sparkle on each frame
                 ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                sparkle.draw();
+                sparkle.draw(sparkle.r);
                 ctx.fill();
 
             });
