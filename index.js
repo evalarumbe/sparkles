@@ -1,4 +1,8 @@
 (() => {
+    const utils = initUtils(); // Used in nested funcs
+    drawSparkles(100, '#make-me-sparkle'); // As many sparkles as you like
+
+    
     /**
      * Define some utility functions.
      * @returns {Object} of utility functions
@@ -26,103 +30,72 @@
         };
 
         return utils;
-    }
+   }
 
     /**
-     * Identify the canvas element, set its resolution according to viewport size,
-     * and return its 2D context.
-     * 
-     * @param {String} canvasSelector - canvas element to fill with sparkles
-     * @returns {CanvasRenderingContext2D}
+     * Draw animated sparkles to the canvas.
+     * @param {number} n - How many sparkles would you like? 
+     * @param {CanvasRenderingContext2D} canvasSelector - Where shall I draw them?
      */
-    function getCanvasContext(canvasSelector) {
+    function drawSparkles(n, canvasSelector) {
+        // Set up randomizers
+        const { randomX, randomY, randomSize, randomDelay } = utils;
+
+        // Set up the canvas
         const canvas = document.querySelector(canvasSelector);
         const ctx = canvas.getContext('2d');
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        
+        // Create and store sparkles
+        const sparkles = [];
 
-        return ctx;
-    }
+        for (let i = 0; i < n; i++) {
+            // Generate a new sparkle
+            const sparkle = {
+                x: randomX(),
+                y: randomY(),
+                r: randomSize(),
+                opacity: 0,
+            };
 
-    /**
-     * Define sparkle-relevant funcs and get sparklin'.
-     * @param {CanvasRenderingContext2D} ctx - where to draw the sparkles
-     */
-    function initSparkles(ctx) {
-        /**
-         * Draw a single sparkle based on a given center point and radius.
-         * 
-         * @param {number} x - center point from left (px)
-         * @param {number} y - center point from top (px)
-         * @param {number} r - sparkle radius (px)
-         */
-        function drawSparkle(x, y, r) {
-            const halfR = r / 2;
+            sparkles.push(sparkle);
+        }
+        
+        // Animate sparkles
+        sparkles.forEach(sparkle => {
+            console.log(sparkle);
             
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.moveTo(x, (y - r)); // top point
-            ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
-            ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
-            ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
-            ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
-            ctx.fill();
-        }
-
-        /**
-         * Draw on the <canvas> until we have enough sparkles.
-         * (though one can never truly have enough sparkles).
-         * 
-         * @param {number} n - How many sparkles would you like?
-         * @param {CanvasRenderingContext2D} ctx - HTML5 canvas context (2D)
-         */
-        function createSparkles(n) {
-            let randomX, randomY, randomRadius;
-            for (let i = 0; i < n; i++) {
-                randomX = utils.randomX();
-                randomY = utils.randomY();
-                randomRadius = utils.randomSize();
-                drawSparkle(randomX, randomY, randomRadius);
-            }
-        }
-
-        createSparkles(1000); // as many as you like
-    }
-
-    const utils = initUtils();
-    initSparkles(getCanvasContext('#make-me-sparkle'));
-})();
-
-
-// WILDERNESS of REFACTORIA
-
-/**
- * TODO: redo with canvas
- * @param {Array} sparkles - HTMLElement Array of sparkles to animate
- */
-    function animate(sparkles) {
-    
-    sparkles.forEach(sparkle => {
-        const twinkle = new gsap.timeline({repeat: -1, yoyo: true});
-        const randomDelay = utils.randomDelay();
-
-        twinkle.to(sparkle, {
-            opacity: 1,
-            delay: randomDelay,
-            duration: 2,
-            ease: 'power2.in',
+            // Set the animation end state
+            gsap.to(sparkle, {
+                duration: 2,
+                delay: randomDelay(),
+                repeat: -1,
+                yoyo: true,
+                opacity: 1,
+            });
+            
+            // Trigger repaints on each frame
+            gsap.ticker.add(() => {
+                const { x, y, r, opacity } = sparkle;
+                
+                const halfR = r / 2;
+                
+                // Clear the canvas on each frame
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Redraw things on each frame
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.beginPath();
+                ctx.moveTo(x, (y - r)); // top point
+                ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
+                ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
+                ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
+                ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
+                ctx.fill();
+            });
         });
-    });
-}
-
-/**
- * TODO: redo with canvas
- * @param {Array} sparkles - HTMLElement Array of sparkles to scatter
- * @param {HTMLElement} area - A parent element to cover with sparkles
- */
-function scatter(sparkles, area) {
-    sparkles.forEach(sparkle => {
-        area.appendChild(sparkle);  
-    });
-}
+    }
+})();
+    
