@@ -16,13 +16,13 @@
 
         utils.randomSize = () => {
             const sizes = [1, 1, 2, 3, 5, 8, 13]; // px (Fibonacci, my heart)
-            const i = Math.floor(Math.random() * (sizes.length + 1));
+            const i = Math.floor(Math.random() * (sizes.length));
             return sizes[i];
         };
 
         utils.randomDelay = () => {
             // between 0.5 and 1.5 seconds
-            return Math.floor(Math.random() * (1.5 - 0.5 + 1) + 0.5);
+            return Math.random() * (1.5 - 0.5 + 1) + 0.5;
         };
 
         return utils;
