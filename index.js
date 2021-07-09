@@ -21,7 +21,8 @@
         utils.randomSize = () => {
             const sizes = [1, 1, 2, 3, 5, 8, 13]; // px (Fibonacci, my heart)
             const i = Math.floor(Math.random() * (sizes.length));
-            return sizes[i];
+            // return sizes[i];
+            return 50;
         };
 
         utils.randomDelay = () => {
@@ -58,15 +59,37 @@
                 y: randomY(),
                 r: randomSize(),
                 opacity: 0,
+                draw: function() {
+                    const { x, y, r } = this;
+                    const halfR = r / 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x, (y - r)); // top point
+                    ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
+                    ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
+                    ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
+                    ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
+                },
+                fade: function() {
+                    const { opacity } = this;
+                    // Clear the sparkle on each frame
+                    ctx.fillStyle = `rgba(0, 0, 0, 0)`;
+                    this.draw();
+                    ctx.fill();
+                    
+                    // Redraw the sparkle on each frame
+                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    this.draw();
+                    ctx.fill();
+                },
             };
+            console.log(sparkle.fade);
 
             sparkles.push(sparkle);
         }
         
         // Animate sparkles
         sparkles.forEach(sparkle => {
-            console.log(sparkle);
-            
             // Set the animation end state
             gsap.to(sparkle, {
                 duration: 2,
@@ -77,24 +100,9 @@
             });
             
             // Trigger repaints on each frame
-            gsap.ticker.add(() => {
-                const { x, y, r, opacity } = sparkle;
-                
-                const halfR = r / 2;
-                
-                // Clear the canvas on each frame
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Redraw things on each frame
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                ctx.beginPath();
-                ctx.moveTo(x, (y - r)); // top point
-                ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
-                ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
-                ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
-                ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
-                ctx.fill();
-            });
+            let fade = sparkle.fade.bind(sparkle);
+            let draw = sparkle.draw.bind(sparkle);
+            gsap.ticker.add(fade);
         });
     }
 })();
