@@ -2,21 +2,12 @@ body {
     background-color: black;
   }
   
-  .first.sparkle {
-    height: 50px;
-    width: 50px;
-  }
-
-  .sparkle {
-    opacity: 0;
-  }
-  
 /* Fallback message for anyone without JS */
 p {
   background-color: rgba(255, 255, 255, 0.8);
   margin-top: 2rem;
   padding: 2rem 3rem 2.5rem;
-  border-radius: 15px;
+  border-radius: 5px;
 }
 
 a {
