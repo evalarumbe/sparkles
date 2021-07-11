@@ -1,8 +1,8 @@
 (() => {
     // Set up high-level dependencies
     const utils = {
-        randomX: () => Math.floor(Math.random() * window.innerWidth),
-        randomY: () => Math.floor(Math.random() * window.innerHeight),
+        randomX: () => Math.floor(Math.random() * canvas.width),
+        randomY: () => Math.floor(Math.random() * canvas.height),
         randomRadius: () => {
             const sizes = [1, 1, 2, 3, 5, 8, 13]; // px (Fibonacci, my heart)
             const i = Math.floor(Math.random() * (sizes.length));
@@ -15,13 +15,11 @@
     const canvas = document.querySelector('#make-me-sparkle');
     const ctx = canvas.getContext('2d');
 
-    // Set canvas to initial viewport size
-    // TODO: dynamic on resize
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Set canvas to element size
+    canvas.width = canvas.height * (canvas.clientWidth / canvas.clientHeight);
 
     // Get movin'
-    const sparkles = createSparkles(100);
+    const sparkles = createSparkles(10);
     animateSparkles(sparkles);
 
 
@@ -81,7 +79,7 @@
          * // TODO: JS Docs for object prop data types
          */
         function clearSparkle({ x, y, rMax }) {
-            ctx.fillStyle = `rgba(0, 0, 0, 1)`;
+            ctx.fillStyle = `rgba(128, 0, 128, 1)`;
             drawSparkle(x, y, rMax); // Clear the maximum possible sparkle size
             ctx.fill();
         }
