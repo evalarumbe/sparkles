@@ -4,6 +4,10 @@
 
 Decorate a canvas element with animated sparkles.
 
+## Useful links
+
+[Code example showing how GSAP and canvas code talk to each other](https://greensock.com/forums/topic/24378-controlling-items-on-canvas-with-gsap-info/?do=findComment&comment=115997)
+
 ## Many possible TODOs
 
 - Play nice with other elements on the page 
