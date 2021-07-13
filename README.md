@@ -24,3 +24,7 @@ Decorate a canvas element with animated sparkles.
 
 - Performance
     - Can I make it so my computer doesn't yell at me so much?
+    
+    - Ideas from Lily:
+        - Maybe running 'clear' per sparkle is overkill. Try clearing the whole canvas with the same frequency... then redraw each sparkle at its current opacity. Their frame rates are the same, so they should all be able to update at the same time, to different values... right?
+        - Maybe a way to achieve this is to render the whole array of sparkles at once, then update all their velocities, then re-render, ad infinitum.
