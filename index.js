@@ -14,16 +14,31 @@
     
     const canvas = document.querySelector('#make-me-sparkle');
     const ctx = canvas.getContext('2d');
+    let firstRender = true; // prevents a delay on resize
 
-    // Set canvas to initial viewport size
-    // TODO: dynamic on resize
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Fill the viewport with sparkles and start over on resize
+    initSparkles();
+    window.addEventListener('resize', handleResize);
 
-    // Get movin'
-    const sparkles = createSparkles(100);
-    animateSparkles(sparkles);
-
+    /**
+     * Create and animate sparkles to fill the viewport.
+     */
+    function initSparkles() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Get movin'
+        const sparkles = createSparkles(100);
+        animateSparkles(sparkles);
+    }
+    
+    /**
+     *  TODO: Prevent canvas from redrawing too often during resize
+     */
+    function handleResize() {
+        firstRender = false;
+        initSparkles();
+    }
 
     /**
      * Set starting properties for all sparkles, and how they will animate.
@@ -48,7 +63,7 @@
             // Set the animation end state
             gsap.to(sparkle, {
                 duration: 2,
-                delay: randomDelay(),
+                delay: firstRender ? randomDelay() : 0,
                 repeat: -1,
                 yoyo: true,
                 opacity: 1,
@@ -75,37 +90,37 @@
             sparkles.forEach(sparkle => {
                 renderSparkle(sparkle);
             });
-        });
+        });   
+    }
+
+    /**
+     * Render the sparkle at its current opacity and size
+     * @param {{ opacity, x, y, r }} sparkle
+     * // TODO: JS Docs for object prop data types
+     */
+    function renderSparkle({ opacity, x, y, r }) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        drawSparkle(x, y, r);
+        ctx.fill();
+    }
         
-        /**
-         * Render the sparkle at its current opacity and size
-         * @param {{ opacity, x, y, r }} sparkle
-         * // TODO: JS Docs for object prop data types
-         */
-        function renderSparkle({ opacity, x, y, r }) {
-            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-            drawSparkle(x, y, r);
-            ctx.fill();
-            
-            /**
-             * Draw a sparkle for a given radius and coordinate (x, y) position.
-             * Call drawSparkle in between calls to ctx.fillStyle(...) and ctx.fill().
-             * 
-             * @param {number} x - center point's pixels from left
-             * @param {number} y - center point's pixels from top
-             * @param {number} r - height and width (loosely, "radius") of the sparkle
-             */
-            function drawSparkle(x, y, r) {
-                const halfR = r / 2; // for legibility
-        
-                ctx.beginPath();
-                ctx.moveTo(x, (y - r)); // top point
-                ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
-                ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
-                ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
-                ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
-                ctx.closePath();
-            }
-        }
+    /**
+     * Draw a sparkle for a given radius and coordinate (x, y) position.
+     * Call drawSparkle in between calls to ctx.fillStyle(...) and ctx.fill().
+     * 
+     * @param {number} x - center point's pixels from left
+     * @param {number} y - center point's pixels from top
+     * @param {number} r - height and width (loosely, "radius") of the sparkle
+     */
+    function drawSparkle(x, y, r) {
+        const halfR = r / 2; // for legibility
+
+        ctx.beginPath();
+        ctx.moveTo(x, (y - r)); // top point
+        ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
+        ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
+        ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
+        ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
+        ctx.closePath();
     }
 })();
