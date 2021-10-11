@@ -66,28 +66,19 @@
      * @param {Array} sparkles TODO: which properties do we need
      */
     function animateSparkles(sparkles) {
-
-        sparkles.forEach(sparkle => {
-            gsap.ticker.add(() => {
-                // If these two lines are swapped, it breaks (:
-                clearSparkle(sparkle);
+        // On each frame (between animation states)
+        gsap.ticker.add(() => {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('cleared');
+            // Render all sparkles
+            sparkles.forEach(sparkle => {
                 renderSparkle(sparkle);
             });
         });
-
+        
         /**
-         * Clear the sparkle on each frame, between animation states
-         * @param {{ x, y, rMax }} sparkle
-         * // TODO: JS Docs for object prop data types
-         */
-        function clearSparkle({ x, y, rMax }) {
-            ctx.fillStyle = `rgba(0, 0, 0, 1)`;
-            drawSparkle(x, y, rMax); // Clear the maximum possible sparkle size
-            ctx.fill();
-        }
-
-        /**
-         * Render the sparkle on each frame, showing new animation states
+         * Render the sparkle at its current opacity and size
          * @param {{ opacity, x, y, r }} sparkle
          * // TODO: JS Docs for object prop data types
          */
@@ -95,27 +86,26 @@
             ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
             drawSparkle(x, y, r);
             ctx.fill();
-        }
-
-        /**
-         * Draw a sparkle for a given radius and coordinate (x, y) position.
-         * Call drawSparkle in between calls to ctx.fillStyle(...) and ctx.fill().
-         * 
-         * @param {number} x - center point's pixels from left
-         * @param {number} y - center point's pixels from top
-         * @param {number} r - height and width (loosely, "radius") of the sparkle
-         */
-        function drawSparkle(x, y, r) {
-            const halfR = r / 2; // for legibility
-
-            ctx.beginPath();
-            ctx.moveTo(x, (y - r)); // top point
-            ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
-            ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
-            ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
-            ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
-            ctx.closePath();
+            
+            /**
+             * Draw a sparkle for a given radius and coordinate (x, y) position.
+             * Call drawSparkle in between calls to ctx.fillStyle(...) and ctx.fill().
+             * 
+             * @param {number} x - center point's pixels from left
+             * @param {number} y - center point's pixels from top
+             * @param {number} r - height and width (loosely, "radius") of the sparkle
+             */
+            function drawSparkle(x, y, r) {
+                const halfR = r / 2; // for legibility
+        
+                ctx.beginPath();
+                ctx.moveTo(x, (y - r)); // top point
+                ctx.bezierCurveTo(x, (y - halfR), (x + halfR), y, (x + r), y); // right point
+                ctx.bezierCurveTo((x + halfR), y, x, (y + halfR), x, (y + r)); // bottom point
+                ctx.bezierCurveTo(x, (y + halfR), (x - halfR), y, (x - r), y); // left point
+                ctx.bezierCurveTo((x - halfR), y, x, (y - halfR), x, (y - r)); // close
+                ctx.closePath();
+            }
         }
     }
 })();
-    
