@@ -75,12 +75,20 @@
     function handleMouseMove(event) {
         // TODO: pass these into func that makes them grow / bright. i think it's gonna get too crowded in here.
         const brighterSparkles = sparklesNearCursor(event.offsetX, event.offsetY);
+        const otherSparkles = sparkles.filter(sparkle => !brighterSparkles.includes(sparkle));
         
         brighterSparkles.forEach(sparkle => {
             // TODO: do something better to them. just testing which subset i grabbed for now.
             // sparkle.rMax = sparkle.r * 4; // lol
             sparkle.x = 0;
         });
+        
+        otherSparkles.forEach(sparkle => {
+            // TODO: do something better to them. just testing which subset i grabbed for now.
+            sparkle.x = 300;
+        });
+
+
 
         setEndState(brighterSparkles);
     }
