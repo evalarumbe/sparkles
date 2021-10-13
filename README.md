@@ -16,9 +16,10 @@ Decorate a canvas element with animated sparkles.
     - [Make it a 3D orb](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors#a_createradialgradient_example)
 
 - Interactivity
-    - [Respond to mouse movement](https://www.youtube.com/watch?v=52rKp7P3gIs&ab_channel=Frankslaboratory)
+    - If cursor moves off screen, dim all sparkles
     - [Respond more elegantly to resize](https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action)
 
 - Place sparkles more intentionally
     - Make them appear in a wave across the canvas (vertical, horizontal or diagonal...)
-    - [Place sparkles so they don't overlap](https://www.youtube.com/watch?v=QkJHDIwPQ9E&ab_channel=TheBuffED) 
+    - [Place sparkles so they don't overlap](https://www.youtube.com/watch?v=QkJHDIwPQ9E&ab_channel=TheBuffED)
+    - Set number of sparkles based on viewport size (not too many, not to few)
