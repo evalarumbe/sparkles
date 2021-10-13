@@ -65,6 +65,11 @@
      *  TODO: Prevent canvas from redrawing too often during resize (see Readme)
      */
     function handleResize() {
+        console.log('resized');
+        allSparkles.forEach(sparkle => {
+            sparkle.x = randomX();
+            sparkle.y = randomY();
+        });
         initSparkles();
     }
 
