@@ -32,14 +32,16 @@
         let radius = 0;
         
         // Generate the specified number of sparkles
-        for (let i = 0; i < n; i++) {    
-            radius = randomRadius();
+        for (let i = 0; i < n; i++) {
             const sparkle = {
                 x: randomX(),
                 y: randomY(),
-                r: radius, // Animated (starts as min height and width)
-                rMax: radius * 2,
-                opacity: 0, // Animated
+                rMin: randomRadius(),
+                rMax: this.rMin * 2,
+                r: this.rMin, // animated
+                opacityMin: 0,
+                opacityMax: 0.7,
+                opacity: this.opacityMin, // animated
             };
             
             sparkles.push(sparkle);
@@ -63,7 +65,6 @@
      *  TODO: Prevent canvas from redrawing too often during resize (see Readme)
      */
     function handleResize() {
-        firstRender = false;
         initSparkles();
     }
 
@@ -73,25 +74,35 @@
      * @returns 
      */
     function handleMouseMove(event) {
-        // TODO: pass these into func that makes them grow / bright. i think it's gonna get too crowded in here.
         const brighterSparkles = sparklesNearCursor(event);
         const otherSparkles = allSparkles.filter(sparkle => !brighterSparkles.includes(sparkle));
         
-        brighterSparkles.forEach(sparkle => {
-            // TODO: do something better to them. just testing which subset i grabbed for now.
-            // sparkle.rMax = sparkle.r * 4; // lol
-            sparkle.x = 0;
-        });
-        
-        // otherSparkles.forEach(sparkle => {
-        //     // TODO: do something better to them. just testing which subset i grabbed for now.
-        //     sparkle.x = 300;
-        // });
+        brighterSparkles.forEach(sparkle => brighten(sparkle));
+        otherSparkles.forEach(sparkle => dim(sparkle));
 
         setEndState(brighterSparkles);
+        setEndState(otherSparkles);
     }
 
     /**
+     * Increase radius of a sparkle (affects the end state of animation)
+     * @param {Object} - sparkle
+     */
+    function brighten(sparkle) {
+        sparkle.rMax = sparkle.rMin * 4;
+        sparkle.opacityMax = 1;
+    }
+    
+    /**
+     * Undo the effect of the brighten function
+     * @param {Object} - sparkle
+     */
+    function dim(sparkle) {
+        sparkle.rMax = sparkle.rMin * 2;
+        sparkle.opacityMax = 0.7;
+    }
+    
+     /**
      * Identify sparkles that are close to the cursor
      * @param {Event} - { offsetX, offsetY } cursor position
      * @returns {Array} - sparkles TODO: document these objects better up top
@@ -132,7 +143,7 @@
                 delay: firstRender ? randomDelay() : 0,
                 repeat: -1,
                 yoyo: true,
-                opacity: 1,
+                opacity: sparkle.opacityMax,
                 r: sparkle.rMax,
             });
         });
@@ -153,6 +164,7 @@
                 renderSparkle(sparkle);
             });
         });   
+        firstRender = false;
     }
 
     /**
