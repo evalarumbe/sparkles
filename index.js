@@ -15,37 +15,19 @@
     const canvas = document.querySelector('#make-me-sparkle');
     const ctx = canvas.getContext('2d');
     let firstRender = true; // prevents a delay on resize
+    const sparkles = createSparkles(100);
 
     // Fill the viewport with sparkles and start over on resize
     initSparkles();
     window.addEventListener('resize', handleResize);
-
-    /**
-     * Create and animate sparkles to fill the viewport.
-     */
-    function initSparkles() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        // Get movin'
-        const sparkles = createSparkles(100);
-        animateSparkles(sparkles);
-    }
-    
-    /**
-     *  TODO: Prevent canvas from redrawing too often during resize
-     */
-    function handleResize() {
-        firstRender = false;
-        initSparkles();
-    }
+    window.addEventListener('mousemove', handleMouseMove);
 
     /**
      * Set starting properties for all sparkles, and how they will animate.
      * @param {number} n - How many sparkles would you like?
      * @return {Array} sparkle objects
      */
-    function createSparkles(n) {
+     function createSparkles(n) {
         const sparkles = [];
         let radius = 0;
         
@@ -59,8 +41,71 @@
                 rMax: radius * 2,
                 opacity: 0, // Animated
             };
+            
+            sparkles.push(sparkle);
+        }
+        
+        return sparkles;
+    }
 
-            // Set the animation end state
+    /**
+     * Create and animate sparkles to fill the viewport.
+     */
+    function initSparkles() {
+        // TODO: maybe canvas size should be handled separately, for readability
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        setEndState(sparkles);
+        animateSparkles(sparkles);
+    }
+    
+    /**
+     *  TODO: Prevent canvas from redrawing too often during resize (see Readme)
+     */
+    function handleResize() {
+        firstRender = false;
+        initSparkles();
+    }
+
+    /**
+     * TODO: Doc
+     * @param {Event} event 
+     * @returns 
+     */
+    function handleMouseMove(event) {
+        // TODO: pass these into func that makes them grow / bright. i think it's gonna get too crowded in here.
+        const brighterSparkles = sparklesNearCursor(event.offsetX, event.offsetY);
+        
+        brighterSparkles.forEach(sparkle => {
+            // TODO: do something better to them. just testing which subset i grabbed for now.
+            // sparkle.rMax = sparkle.r * 4; // lol
+            sparkle.x = 0;
+        });
+
+        setEndState(brighterSparkles);
+    }
+
+    /**
+     * Identify sparkles that are within a 200px TODO: RADIUS (not square) of the cursor
+     * @param {Array} - cursor position [x, y]
+     * @returns {Array} - sparkles TODO: document these objects better up top
+     */
+    // TODO: this just grabs all the big ones right now. you wanna grab all the nearby ones.
+    function sparklesNearCursor(x, y) {
+        const sparklesNearCursor = sparkles.filter(sparkle => {
+            console.log('sparkle.r', sparkle.r);
+            return sparkle.r >= 13;
+        });
+        console.log('how many?', sparklesNearCursor.length);
+        return sparklesNearCursor;
+    }
+
+    /**
+     * Set ending animation states for a set (or subset) of sparkles
+     * @param {Array} sparkles Which sparkles should this affect?
+     */
+    function setEndState(sparkles) {
+        sparkles.forEach(sparkle => {
             gsap.to(sparkle, {
                 duration: 2,
                 delay: firstRender ? randomDelay() : 0,
@@ -69,13 +114,9 @@
                 opacity: 1,
                 r: sparkle.rMax,
             });
-
-            sparkles.push(sparkle);
-        }
-
-        return sparkles;
+        });
     }
-
+    
     /**
      * Continuously clear and redraw sparkles
      * @param {Array} sparkles TODO: which properties do we need
