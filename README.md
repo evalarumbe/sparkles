@@ -17,6 +17,7 @@ Decorate a canvas element with animated sparkles.
 
 - Interactivity
     - [Respond to mouse movement](https://www.youtube.com/watch?v=52rKp7P3gIs&ab_channel=Frankslaboratory)
+    - [Respond more elegantly to resize](https://stackoverflow.com/questions/5489946/how-to-wait-for-the-end-of-resize-event-and-only-then-perform-an-action)
 
 - Place sparkles more intentionally
     - Make them appear in a wave across the canvas (vertical, horizontal or diagonal...)
