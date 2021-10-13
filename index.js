@@ -29,7 +29,6 @@
      */
      function createSparkles(n) {
         const sparkles = [];
-        let radius = 0;
         
         // Generate the specified number of sparkles
         for (let i = 0; i < n; i++) {
@@ -65,7 +64,6 @@
      *  TODO: Prevent canvas from redrawing too often during resize (see Readme)
      */
     function handleResize() {
-        console.log('resized');
         allSparkles.forEach(sparkle => {
             sparkle.x = randomX();
             sparkle.y = randomY();
@@ -116,7 +114,6 @@
         const sparklesNearCursor = allSparkles.filter(sparkle => {
             return isNearCursor(sparkle, event);
         });
-        console.log('how many?', sparklesNearCursor.length);
         return sparklesNearCursor;
     }
 
