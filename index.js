@@ -56,7 +56,7 @@
         // TODO: maybe canvas size should be handled separately, for readability
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        setEndState(allSparkles);
+        allSparkles.forEach(setEndState);
         animateSparkles(allSparkles);
     }
     
@@ -80,11 +80,15 @@
         const brighterSparkles = sparklesNearCursor(event);
         const otherSparkles = allSparkles.filter(sparkle => !brighterSparkles.includes(sparkle));
         
-        brighterSparkles.forEach(sparkle => brighten(sparkle));
-        otherSparkles.forEach(sparkle => dim(sparkle));
-
-        setEndState(brighterSparkles);
-        setEndState(otherSparkles);
+        brighterSparkles.forEach(sparkle => {
+            brighten(sparkle);
+            setEndState(sparkle);
+        });
+        
+        otherSparkles.forEach(sparkle => {
+            dim(sparkle);
+            setEndState(sparkle);
+        });
     }
 
     /**
@@ -138,16 +142,14 @@
      * Set ending animation states for a set (or subset) of sparkles
      * @param {Array} sparkles Which sparkles should this affect?
      */
-    function setEndState(sparkles) {
-        sparkles.forEach(sparkle => {
-            gsap.to(sparkle, {
-                duration: 2,
-                delay: firstRender ? randomDelay() : 0,
-                repeat: -1,
-                yoyo: true,
-                opacity: sparkle.opacityMax,
-                r: sparkle.rMax,
-            });
+    function setEndState(sparkle) {
+        gsap.to(sparkle, {
+            duration: 2,
+            delay: firstRender ? randomDelay() : 0,
+            repeat: -1,
+            yoyo: true,
+            opacity: sparkle.opacityMax,
+            r: sparkle.rMax,
         });
     }
     
