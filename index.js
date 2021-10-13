@@ -15,7 +15,7 @@
     const canvas = document.querySelector('#make-me-sparkle');
     const ctx = canvas.getContext('2d');
     let firstRender = true; // prevents a delay on resize
-    const sparkles = createSparkles(100);
+    const allSparkles = createSparkles(100);
 
     // Fill the viewport with sparkles and start over on resize
     initSparkles();
@@ -55,8 +55,8 @@
         // TODO: maybe canvas size should be handled separately, for readability
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        setEndState(sparkles);
-        animateSparkles(sparkles);
+        setEndState(allSparkles);
+        animateSparkles(allSparkles);
     }
     
     /**
@@ -74,8 +74,8 @@
      */
     function handleMouseMove(event) {
         // TODO: pass these into func that makes them grow / bright. i think it's gonna get too crowded in here.
-        const brighterSparkles = sparklesNearCursor(event.offsetX, event.offsetY);
-        const otherSparkles = sparkles.filter(sparkle => !brighterSparkles.includes(sparkle));
+        const brighterSparkles = sparklesNearCursor(event);
+        const otherSparkles = allSparkles.filter(sparkle => !brighterSparkles.includes(sparkle));
         
         brighterSparkles.forEach(sparkle => {
             // TODO: do something better to them. just testing which subset i grabbed for now.
@@ -83,29 +83,42 @@
             sparkle.x = 0;
         });
         
-        otherSparkles.forEach(sparkle => {
-            // TODO: do something better to them. just testing which subset i grabbed for now.
-            sparkle.x = 300;
-        });
-
-
+        // otherSparkles.forEach(sparkle => {
+        //     // TODO: do something better to them. just testing which subset i grabbed for now.
+        //     sparkle.x = 300;
+        // });
 
         setEndState(brighterSparkles);
     }
 
     /**
-     * Identify sparkles that are within a 200px TODO: RADIUS (not square) of the cursor
-     * @param {Array} - cursor position [x, y]
+     * Identify sparkles that are close to the cursor
+     * @param {Event} - { offsetX, offsetY } cursor position
      * @returns {Array} - sparkles TODO: document these objects better up top
      */
-    // TODO: this just grabs all the big ones right now. you wanna grab all the nearby ones.
-    function sparklesNearCursor(x, y) {
-        const sparklesNearCursor = sparkles.filter(sparkle => {
-            console.log('sparkle.r', sparkle.r);
-            return sparkle.r >= 13;
+    function sparklesNearCursor(event) {
+        const sparklesNearCursor = allSparkles.filter(sparkle => {
+            return isNearCursor(sparkle, event);
         });
         console.log('how many?', sparklesNearCursor.length);
         return sparklesNearCursor;
+    }
+
+    /**
+     * Test if a sparkle's center point is within a 200px radius of the cursor
+     * 
+     * Thank you Internet for saving me time on circle math
+     * https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-120.php
+     * 
+     * @param {Object} - sparkle { x, y } center point
+     * @param {Event} - mousemove { offsetX, offsetY } cursor position
+     * @returns {Boolean}
+     */
+    function isNearCursor({ x, y }, { offsetX, offsetY }) {
+        const radiusFromCursor = 200; // px
+        const dist = (x - offsetX) * (x - offsetX) + (y - offsetY) * (y - offsetY);
+        const rSquared = radiusFromCursor * radiusFromCursor;
+        return dist < rSquared;
     }
 
     /**
