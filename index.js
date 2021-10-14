@@ -110,6 +110,7 @@
     window.addEventListener('load', initSparkles);
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseout', handleMouseOut);
 
     /**
      * Create the specified number of sparkles.
@@ -166,6 +167,16 @@
         });
     }
     
+    /**
+     * Remove effect from all sparkles.
+     */
+     function handleMouseOut() {
+        allSparkles.forEach(sparkle => {
+            sparkle.dim();
+            sparkle.setEndState();
+        });
+    }
+
      /**
      * Identify sparkles that are close to the cursor
      * @param {Event} - { offsetX, offsetY } cursor position
