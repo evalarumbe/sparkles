@@ -23,3 +23,10 @@ Decorate a canvas element with animated sparkles.
     - Make them appear in a wave across the canvas (vertical, horizontal or diagonal...)
     - [Place sparkles so they don't overlap](https://www.youtube.com/watch?v=QkJHDIwPQ9E&ab_channel=TheBuffED)
     - Set number of sparkles based on viewport size (not too many, not to few)
+
+## Unsolved mysteries
+
+- Sometimes huge flashes of white appear on first load (or is it first mouse over?
+    - yeah without mouseover, no sparkles appear at all. what gives?
+- Sometimes the animation pauses for dim sparkles
+- At some point the sparkling all synced up, but I wanted them separate
