@@ -26,7 +26,6 @@ Decorate a canvas element with animated sparkles.
 
 ## Unsolved mysteries
 
-- Sometimes huge flashes of white appear on first load (or is it first mouse over?
-    - yeah without mouseover, no sparkles appear at all. what gives?
-- Sometimes the animation pauses for dim sparkles
-- At some point the sparkling all synced up, but I wanted them separate
+- Bugs on mouse over:
+    - animation pauses for dim sparkles
+    - sparkling all syncs up, but I wanted them separate like they are at load (perhaps something to do with delay?)
