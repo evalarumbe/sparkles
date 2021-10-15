@@ -57,11 +57,15 @@
         }
 
         /**
-         * Render the sparkle at its current opacity and size
+         * Render the sparkle at its current opacity and size.
+         * Optionally override default white color
+         * @param {r} 0-255 
+         * @param {g} 0-255
+         * @param {b} 0-255
+         * @param {opacity} 0-1
          */
-        render() {
-            const { r, rMin, rMax } = this;
-            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        render(r = 255, g = 255, b = 255, opacity = this.opacity) {
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
             this.draw();
             ctx.fill();
         }
